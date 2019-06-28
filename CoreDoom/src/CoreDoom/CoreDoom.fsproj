@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <CoreDoomRootDir>$(ProjectDir)..\..\..\</CoreDoomRootDir>
+    <GZDoomDir>$(CoreDoomRootDir)build\</GZDoomDir>
+    <GZDoomProject>$(GZDoomDir)src\zdoom.vcxproj</GZDoomProject>
+    <GZDoomPk3Project>$(GZDoomDir)wadsrc\gzdoom_pk3.vcxproj</GZDoomPk3Project>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="GZDoomNative.fs" />
+    <Compile Include="GZDoom.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup />
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent" Condition="$(Configuration) == 'Debug'">
+    <MSBuild Projects="$(GZDoomProject)" Properties="Configuration=Debug;Platform=x64" />
+    <MSBuild Projects="$(GZDoomProjectPk3)" Properties="Configuration=Debug;Platform=x64" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="$(Configuration) == 'Debug'">
+    <Copy SourceFiles="$(GZDoomDir)Debug\gzdoom.dll" DestinationFolder="$(TargetDir)" />
+    <Copy SourceFiles="$(GZDoomDir)Debug\gzdoom.pk3" DestinationFolder="$(TargetDir)" />
+  </Target>
+
+</Project>

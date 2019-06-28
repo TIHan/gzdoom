@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CoreDoom": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

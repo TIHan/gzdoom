@@ -80,6 +80,7 @@
 #include "st_start.h"
 
 #include "optwin32.h"
+#include "coreclr_interop.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -1237,6 +1238,23 @@ CUSTOM_CVAR(Bool, disablecrashlog, false, CVAR_ARCHIVE | CVAR_GLOBALCONFIG)
 // WinMain
 //
 //==========================================================================
+
+extern "C" CLR_EXPORT int extern_main(int argc, char** argv)
+{
+	HINSTANCE hInstance = (HINSTANCE)GetModuleHandle(NULL);
+	printf("Core CLR\n");
+	if (hInstance == NULL)
+	{
+		printf("OH NOOO\n");
+	}
+	else
+	{
+		printf("we have an instance.\n");
+	}
+	__argc = 0;
+	__wargv = NULL;
+	return wWinMain (hInstance, nullptr, nullptr, 0);
+}
 
 int WINAPI wWinMain (HINSTANCE hInstance, HINSTANCE nothing, LPWSTR cmdline, int nCmdShow)
 {
