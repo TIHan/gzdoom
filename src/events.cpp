@@ -42,6 +42,7 @@
 #include "g_game.h"
 #include "info.h"
 #include "utf8.h"
+#include "coreclr_interop.h"
 
 EventManager staticEventManager;
 
@@ -405,6 +406,13 @@ int EventManager::WorldLineDamaged(line_t* line, AActor* source, int damage, FNa
 	return damage;
 }
 
+void (*externCallback_DStaticEventHandler_PlayerEntered)(int num, bool fromhub);
+
+extern "C" CLR_EXPORT void set_externCallback_DStaticEventHandler_PlayerEntered(void (*funcptr)(int, bool))
+{
+	externCallback_DStaticEventHandler_PlayerEntered = funcptr;
+}
+
 void EventManager::PlayerEntered(int num, bool fromhub)
 {
 	// this event can happen during savegamerestore. make sure that local handlers don't receive it.
@@ -416,6 +424,11 @@ void EventManager::PlayerEntered(int num, bool fromhub)
 
 	for (DStaticEventHandler* handler = FirstEventHandler; handler; handler = handler->next)
 		handler->PlayerEntered(num, fromhub);
+
+	if (externCallback_DStaticEventHandler_PlayerEntered != NULL)
+	{
+		externCallback_DStaticEventHandler_PlayerEntered(num, fromhub);
+	}
 }
 
 void EventManager::PlayerRespawned(int num)
